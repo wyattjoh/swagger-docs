@@ -28,13 +28,20 @@ passport.serializeUser((user, done) => { done(null, user); });
 
 passport.deserializeUser((user, done) => { done(null, user); });
 
-app.use(session({
+let sess = {
   secret: process.env.SECRET,
   resave: true,
   saveUninitialized: true,
   store: new RedisStore({client}),
   cookie: {}
-}));
+};
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(sess));
 app.use(passport.initialize());
 app.use(passport.session());
 
