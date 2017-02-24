@@ -8,6 +8,7 @@ const GitHubStrategy = require('passport-github').Strategy;
 const github = require('octonode');
 const morgan = require('morgan');
 const querystring = require('querystring');
+const request = require('request');
 
 const app = express();
 
@@ -126,7 +127,13 @@ app.get('/swagger', (req, res, next) => {
         return next(err);
       }
 
-      res.redirect(302, data.download_url);
+      request(data.download_url, (err, response, body) => {
+        if (err) {
+          return next(err);
+        }
+
+        res.status(response.statusCode).send(body).end();
+      });
     });
 });
 
