@@ -6,13 +6,15 @@ const redis = require('redis');
 const client = redis.createClient(process.env.REDIS_URL);
 const GitHubStrategy = require('passport-github').Strategy;
 const github = require('octonode');
+const morgan = require('morgan');
 const querystring = require('querystring');
 
 const app = express();
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-app.use(express.static('public'))
+app.use(morgan('tiny'));
+app.use(express.static('public'));
 
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
@@ -45,9 +47,14 @@ app.use(session(sess));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/auth/logout', (req, res) => {
-  delete req.session.passport;
-  res.redirect('/');
+app.get('/auth/logout', (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return next(err);
+    }
+
+    res.redirect('/');
+  });
 });
 app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback', passport.authenticate('github', {
@@ -57,17 +64,28 @@ app.get('/auth/github/callback', passport.authenticate('github', {
 });
 
 app.use((req, res, next) => {
+  if (req.session && req.session.redirect) {
+    let redirect = req.session.redirect;
+    delete req.session.redirect;
+    res.redirect(redirect);
+    return;
+  }
+
   if (req.user) {
     req.client = github.client(req.user.accessToken);
   }
 
   next();
-})
+});
 
 app.get('/', (req, res) => {
   let ctx = {user: req.user};
 
-  if (ctx.user) {
+  if (req.session.repos) {
+    ctx.repos = req.session.repos;
+
+    res.render('pages/index', ctx);
+  } else if (ctx.user) {
     req.client.me().repos({
       per_page: 100
     }, (err, data) => {
@@ -76,12 +94,28 @@ app.get('/', (req, res) => {
       }
 
       ctx.repos = data;
+      req.session.repos = data;
 
       res.render('pages/index', ctx);
     });
   } else {
     res.render('pages/index', ctx);
   }
+});
+
+app.get('/reload', (req, res) => {
+  delete req.session.repos;
+  res.redirect('/');
+});
+
+app.use((req, res, next) => {
+  if (!req.user) {
+    req.session.redirect = req.originalUrl;
+    res.redirect('/auth/github');
+    return;
+  }
+
+  next();
 });
 
 app.get('/swagger', (req, res, next) => {
