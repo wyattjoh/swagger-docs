@@ -1,0 +1,17 @@
+{
+  "name": "swagger-docs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Wyatt Johnson <wyattjoh@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "connect-redis": "^3.2.0",
+    "ejs": "^2.5.6",
+    "express": "^4.14.1",
+    "express-session": "^1.15.1",
+    "octonode": "^0.7.9",
+    "passport": "^0.3.2",
+    "passport-github": "^1.1.0",
+    "redis": "^2.6.5"
+  }
+}

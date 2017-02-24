@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+
+    <!-- Milligram CSS minified -->
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Swagger Documentation Generator</h1>
+
+      <% if (user != null ) { %>
+        <a class="button" href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a class="button" href="/auth/github">Login</a>
+      <% } %>
+
+      <% if (user != null ) { %>
+        <hr/>
+
+        <form action="/docs" method="get">
+          <fieldset>
+            <label for="repo">Repository to load</label>
+            <select name="repo">
+              <% repos.forEach((repo) => { %>
+              <option value="<%= repo.full_name %>"><%= repo.full_name %></option>
+              <% }) %>
+            </select>
+            <label for="filename">Swagger file to load</label>
+            <input type="text" name="filename" value="swagger.yml">
+            <label for="host">API Host</label>
+            <input type="text" name="host" value="">
+            <button type="submit">Generate</button>
+          </fieldset>
+        </form>
+      <% } %>
+    </div>
+  </body>
+</html>
