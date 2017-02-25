@@ -29,7 +29,7 @@ passport.use(new GitHubStrategy({
 ));
 
 passport.serializeUser((user, done) => done(null, encryptor.encrypt(user)));
-passport.deserializeUser((user, done) => done(null, encryptor.decrypt(user));
+passport.deserializeUser((user, done) => done(null, encryptor.decrypt(user)));
 
 let sess = {
   secret: process.env.SECRET,
@@ -79,7 +79,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
   let ctx = {user: req.user};
 
   if (req.session.repos) {
