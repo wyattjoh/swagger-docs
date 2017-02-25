@@ -9,6 +9,7 @@ const github = require('octonode');
 const morgan = require('morgan');
 const querystring = require('querystring');
 const request = require('request');
+const encryptor = require('simple-encryptor')(process.env.SECRET);
 
 const app = express();
 
@@ -27,9 +28,8 @@ passport.use(new GitHubStrategy({
   }
 ));
 
-passport.serializeUser((user, done) => { done(null, user); });
-
-passport.deserializeUser((user, done) => { done(null, user); });
+passport.serializeUser((user, done) => done(null, encryptor.encrypt(user)));
+passport.deserializeUser((user, done) => done(null, encryptor.decrypt(user));
 
 let sess = {
   secret: process.env.SECRET,
