@@ -16,7 +16,6 @@ const app = express();
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.use(morgan('tiny'));
-app.use(express.static('public'));
 
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,

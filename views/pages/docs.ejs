@@ -1,101 +1,12 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <title>Swagger Docs - UI</title>
-
-    <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16" />
-
-    <link href='css/screen.css' rel='stylesheet' type='text/css' />
-    <link href='css/reset.css' rel='stylesheet' type='text/css' />
-
-    <script src='lib/object-assign-pollyfill.js' type='text/javascript'></script>
-    <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
-    <script src='lib/handlebars-4.0.5.js' type='text/javascript'></script>
-    <script src='lib/lodash.min.js' type='text/javascript'></script>
-    <script src='lib/backbone-min.js' type='text/javascript'></script>
-    <script src='swagger-ui.js' type='text/javascript'></script>
-    <script src='lib/highlight.9.1.0.pack.js' type='text/javascript'></script>
-    <script src='lib/highlight.9.1.0.pack_extended.js' type='text/javascript'></script>
-    <script src='lib/jsoneditor.min.js' type='text/javascript'></script>
-    <script src='lib/marked.js' type='text/javascript'></script>
-    <script src='lib/swagger-oauth.js' type='text/javascript'></script>
-
-    <script type="text/javascript">
-        $(function() {
-            var url = "<%- doc %>";
-
-            hljs.configure({
-                highlightSizeThreshold: 5000
-            });
-
-            function setAuthorizationHeader(value) {
-              window.swaggerUi.api.clientAuthorizations.add("key", new SwaggerClient.ApiKeyAuthorization("Authorization", value, "header"));
-              sessionStorage.setItem("key", value);
-            }
-
-            window.swaggerUi = new SwaggerUi({
-                url: url,
-                dom_id: "swagger-ui-container",
-                validatorUrl: null,
-                supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
-                onComplete: function(swaggerApi, swaggerUi) {
-                  var apiKey = sessionStorage.getItem("key");
-                  if (apiKey) {
-                    setAuthorizationHeader(apiKey);
-                    $("#input_apiKey").val(apiKey);
-                  }
-                },
-                onFailure: function(data) {
-                    console.log("Unable to Load SwaggerUI");
-                },
-                docExpansion: 'none',
-                jsonEditor: true,
-                defaultModelRendering: 'model',
-                showRequestHeaders: false,
-                showOperationIds: false,
-                host: <%- JSON.stringify(host) %>
-            });
-
-            $("#input_apiKey").change(function(e) {
-              setAuthorizationHeader(e.target.value);
-            });
-
-            $("#logo").click(function(e) {
-              e.preventDefault();
-              history.pushState("", document.title, window.location.pathname + window.location.search);
-            });
-
-            window.swaggerUi.load();
-        });
-    </script>
-</head>
-
-<body class="swagger-section">
-    <div id='header'>
-        <div class="swagger-ui-wrap">
-            <a id="logo" href="#"><span class="logo__title">swagger docs</span></a>
-            <form id='api_selector'>
-                <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="hidden" /></div>
-                <div id='auth_container'></div>
-                <div class='input'><input id="input_apiKey" name="apiKey" type="text" placeholder="Authorization header"/></div>
-                <div class='input'>
-                  <a id="explore" class="header__btn" href="#">Reload</a>
-                  <a class="header__btn" href="/">Go Back</a>
-                  <a class="header__btn" href="/auth/logout">Logout</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
-    <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
-</body>
-
+    <title>Swagger UI</title>
+  </head>
+  <body>
+    <redoc spec-url="<%- doc %>"></redoc>
+    <script src="//rebilly.github.io/ReDoc/releases/latest/redoc.min.js"> </script>
+  </body>
 </html>
